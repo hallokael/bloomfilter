@@ -35,15 +35,19 @@ func New(m, k uint64) (*Filter, error) {
 }
 
 func newRandKeys(k uint64) []uint64 {
-	keys := make([]uint64, k)
-	err := binary.Read(rand.Reader, binary.LittleEndian, keys)
-	if err != nil {
-		log.Panicf(
-			"Cannot read %d bytes from CSRPNG crypto/rand.Read (err=%v)",
-			Uint64Bytes, err,
-		)
+	for {
+		keys := make([]uint64, k)
+		err := binary.Read(rand.Reader, binary.LittleEndian, keys)
+		if err != nil {
+			log.Panicf(
+				"Cannot read %d bytes from CSRPNG crypto/rand.Read (err=%v)",
+				Uint64Bytes, err,
+			)
+		}
+		if UniqueKeys(keys) {
+			return keys
+		}
 	}
-	return keys
 }
 
 // NewCompatible Filter compatible with f
