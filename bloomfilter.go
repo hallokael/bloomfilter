@@ -47,6 +47,9 @@ func (f *Filter) K() uint64 {
 
 // Add a hashable item, v, to the filter
 func (f *Filter) Add(v hash.Hash64) {
+	if f.Contains(v) {
+		return
+	}
 	f.lock.Lock()
 	defer f.lock.Unlock()
 
